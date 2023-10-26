@@ -1,7 +1,7 @@
 {
   "start_time": 0,
   "dt": 1,
-  "end_time": 400000,
+  "end_time": 100000,
 
   "bodies": {
 
@@ -99,8 +99,22 @@
       "frame_id": 0,
       "direction": [ 0, 0, 0 ],
       "rel_dir": "normal",
-      "delta_v": 1500,
+      "delta_v": 1,
       "perform_time": 6000
+    }
+  },
+
+  "const_accel_maneuvers": {
+    "mnv2": {
+      "id": 4001,
+      "vessel_ids": [ 3 ],
+      "frame_id": 0,
+      "direction": [ 0, 0, 0 ],
+      "rel_dir": "prograde",
+      "delta_v": 3000,
+      "accel": 0,
+      "duration": 12000,
+      "perform_time": 1200
     }
   }
 

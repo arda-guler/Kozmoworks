@@ -14,6 +14,11 @@ void SymplecticEuler::step(double dt, double time)
 		}
 
 		v.applyAccel(grav_vector);
+		
+	}
+
+	for (auto& v : this->vessels)
+	{
 		v.vel = v.vel + v.accel * dt;
 		v.pos = v.pos + v.vel * dt;
 		v.clearAccels();
@@ -76,6 +81,12 @@ void Yoshida8::step(double dt, double time)
 				grav_accel = grav_accel + b.getGravity(v.pos, false);
 			}
 			v.applyAccel(grav_accel);
+		}
+
+		// const. accel. mnv. accel
+		for (auto& cam : this->const_accel_maneuvers)
+		{
+			cam.perform(time, this->bodies, this->vessels);
 		}
 
 		// -- update vel

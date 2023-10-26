@@ -37,6 +37,7 @@ int main(int argc, char **argv)
 	std::vector<Body> bodies;
 	std::vector<Vessel> vessels;
 	std::vector<ImpulsiveManeuver> impulsive_maneuvers;
+	std::vector<ConstAccelManeuver> const_accel_maneuvers;
 
 	std::cout << "Reading mission file:" << mission_filename << "\n";
 	json mission_json = readJSON(mission_filename);
@@ -102,6 +103,39 @@ int main(int argc, char **argv)
 		impulsive_maneuvers.push_back(new_imp_mnv);
 	}
 
+	// import constant acceleration maneuvers
+	/*int pid, std::vector<int> pvessel_ids, int pframe_id,
+		Vec3 pdirection, std::string preldir, double pdelta_v, double accel_duration,
+		double pperform_time, std::string accel_or_duration*/
+	std::cout << "Importing constant acceleration maneuvers...\n";
+	for (auto cam : mission_json["const_accel_maneuvers"])
+	{
+		int new_id = cam["id"];
+		std::vector<int> new_vessel_ids = cam["vessel_ids"];
+		int new_frame_id = cam["frame_id"];
+		Vec3 new_direction = Vec3(cam["direction"]);
+		std::string new_reldir = cam["rel_dir"];
+		double new_delta_v = cam["delta_v"];
+		double new_accel = cam["accel"];
+		double new_duration = cam["duration"];
+		double new_perform_time = cam["perform_time"];
+
+		if (new_accel == 0)
+		{
+			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessel_ids, new_frame_id,
+				new_direction, new_reldir, new_delta_v, new_duration, new_perform_time, "duration");
+
+			const_accel_maneuvers.push_back(new_const_accel_mnv);
+		}
+		else
+		{
+			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessel_ids, new_frame_id,
+				new_direction, new_reldir, new_delta_v, new_accel, new_perform_time, "accel");
+
+			const_accel_maneuvers.push_back(new_const_accel_mnv);
+		}
+	}
+
 	// import simulation parameters
 	std::cout << "Importing simulation parameters...\n";
 	double time = mission_json["start_time"];
@@ -110,7 +144,7 @@ int main(int argc, char **argv)
 
 	// initialize solver
 	std::cout << "Initializing solver...\n";
-	Yoshida8 Y8 = Yoshida8(bodies, vessels, impulsive_maneuvers);
+	Yoshida8 Y8 = Yoshida8(bodies, vessels, impulsive_maneuvers, const_accel_maneuvers);
 
 	// these two below are placeholders
 	std::vector<Vec3> positions;
