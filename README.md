@@ -6,3 +6,11 @@ Astrodynamics software, to-be successor of [OrbitSim3D](https://github.com/arda-
 This version currently **supports n-body problems** with **impulsive orbital maneuvering**. It features a 1st order and an 8th order orbit propagator.
 
 Mission scenarios are defined in .json files - see scenarios/test.json for an example.
+
+This is very much a Work-In-Progress (TM) - many features are missing but intended for implementation:
+
+- Finite burn maneuvers
+- Atmospheric drag
+- Radiation pressure
+- Spherical harmonics gravity
+- ...
