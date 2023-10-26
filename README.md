@@ -1,4 +1,8 @@
 # Kozmoworks
-Astrodynamics software. I'm writing this to eventually be the successor to [OrbitSim3D](https://github.com/arda-guler/orbitSim3D).
 
-This version currently works for n-body problems, but support for orbital maneuvers and non-gravitational perturbations are not yet added. 
+![Figure_1](https://github.com/arda-guler/Kozmoworks/assets/80536083/3419f5e3-995f-46e2-8554-e72b7db746a9)
+
+Astrodynamics software, to-be successor of [OrbitSim3D](https://github.com/arda-guler/orbitSim3D), with similar features but faster computations. 
+This version currently **supports n-body problems** with **impulsive orbital maneuvering**.
+
+Mission scenarios are defined in .json files - see scenarios/test.json for an example.
