@@ -6,6 +6,8 @@
 class RigidBody
 {
 public:
+	int id;
+
 	Vec3 pos;
 	Vec3 vel;
 	Vec3 accel;
@@ -19,6 +21,8 @@ public:
 
 	RigidBody()
 	{
+		id = 0;
+
 		pos = Vec3();
 		vel = Vec3();
 		accel = Vec3();
@@ -31,10 +35,12 @@ public:
 		moment_of_inertia = Mtx3x3();
 	}
 
-	RigidBody(Vec3 ppos, Vec3 pvel, Vec3 paccel,
+	RigidBody(int pid, Vec3 ppos, Vec3 pvel, Vec3 paccel,
 		Mtx3x3 porient, Vec3 pang_vel, Vec3 pang_accel,
 		double pmass, Mtx3x3 pmoment_of_inertia)
 	{
+		id = pid;
+
 		pos = ppos;
 		vel = pvel;
 		accel = paccel;

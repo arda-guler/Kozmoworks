@@ -1,6 +1,8 @@
+#include <iostream>
+
 #include "Solver.h"
 
-void SymplecticEuler::step(double dt)
+void SymplecticEuler::step(double dt, double time)
 {
 	for (auto& v : this->vessels)
 	{
@@ -18,7 +20,7 @@ void SymplecticEuler::step(double dt)
 	}
 }
 
-void Yoshida8::step(double dt)
+void Yoshida8::step(double dt, double time)
 {
 	double w1 = 0.311790812418427e0;
 	double w2 = -0.155946803821447e1;
@@ -98,6 +100,12 @@ void Yoshida8::step(double dt)
 	for (auto& v : this->vessels)
 	{
 		v.pos = v.pos + v.vel * cs[15] * dt;
+	}
+
+	// impulsive maneuvers
+	for (auto& m : this->impulsive_maneuvers)
+	{
+		m.perform(time, this->bodies, this->vessels);
 	}
 
 	// done!

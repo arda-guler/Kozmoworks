@@ -11,10 +11,12 @@ public:
 		prop_mass = 0;
 	}
 
-	Vessel(Vec3 ppos, Vec3 pvel, Vec3 paccel,
+	Vessel(int pid, Vec3 ppos, Vec3 pvel, Vec3 paccel,
 		Mtx3x3 porient, Vec3 pang_vel, Vec3 pang_accel,
 		double pmass, Mtx3x3 pmoment_of_inertia, double pprop_mass)
 	{
+		id = pid;
+
 		pos = ppos;
 		vel = pvel;
 		accel = paccel;

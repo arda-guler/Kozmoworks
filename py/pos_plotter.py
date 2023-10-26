@@ -16,15 +16,13 @@ def set_axes_equal(ax):
     z_range = abs(z_limits[1] - z_limits[0])
     z_middle = np.mean(z_limits)
 
-    # The plot bounding box is a sphere in the sense of the infinity
-    # norm, hence I call half the max range the plot radius.
     plot_radius = 0.5*max([x_range, y_range, z_range])
 
     ax.set_xlim3d([x_middle - plot_radius, x_middle + plot_radius])
     ax.set_ylim3d([y_middle - plot_radius, y_middle + plot_radius])
     ax.set_zlim3d([z_middle - plot_radius, z_middle + plot_radius])
 
-csv_file = 'output.csv' 
+csv_file = 'output.csv'
 data = pd.read_csv(csv_file, header=None, names=['x', 'y', 'z'])
 
 x = data['x']
@@ -39,10 +37,23 @@ y2 = data2['y']
 z2 = data2['z']
 
 fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+ax = fig.add_subplot(111, projection='3d', computed_zorder=False)
 
-ax.plot(x, y, z, label='Trajectory 1', lw=2)
-ax.plot(x2, y2, z2, label='Trajectory 2', lw=2)
+# put Earth
+phi = np.linspace(0,2*np.pi, 256).reshape(256, 1) # the angle of the projection in the xy-plane
+theta = np.linspace(0, np.pi, 256).reshape(-1, 256) # the angle from the polar axis, ie the polar angle
+equatorial_radius = 6378137
+polar_radius = 6356752.3
+
+xe = equatorial_radius*np.sin(theta)*np.cos(phi)
+ye = equatorial_radius*np.sin(theta)*np.sin(phi)
+ze = polar_radius*np.cos(theta)
+
+ax.plot_surface(xe, ye, ze, color='b', zorder=0, alpha=0.4)
+
+# put trajectories
+ax.plot(x, y, z, label='Trajectory 1', lw=2, zorder=1)
+ax.plot(x2, y2, z2, label='Trajectory 2', lw=2, zorder=1)
 
 ax.set_xlabel('X')
 ax.set_ylabel('Y')

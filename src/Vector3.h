@@ -63,6 +63,15 @@ public:
 		return Vec3(new_x, new_y, new_z);
 	}
 
+	Vec3 operator- ()
+	{
+		double new_x = -x;
+		double new_y = -y;
+		double new_z = -z;
+
+		return Vec3(new_x, new_y, new_z);
+	}
+
 	Vec3 cross(Vec3 other);
 	double dot(Vec3 other);
 	Vec3 normalized();

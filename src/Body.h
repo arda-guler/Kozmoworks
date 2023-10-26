@@ -33,11 +33,13 @@ public:
 		mu = mass * Constants::G; 
 	}
 
-	Body(Vec3 ppos, Vec3 pvel, Vec3 paccel,
+	Body(int pid, Vec3 ppos, Vec3 pvel, Vec3 paccel,
 		Mtx3x3 porient, Vec3 pang_vel, Vec3 pang_accel,
 		double pmass, Mtx3x3 pmoment_of_inertia,
 		double pRmin, double pRmax)
 	{
+		id = pid;
+
 		pos = ppos;
 		vel = pvel;
 		accel = paccel;
