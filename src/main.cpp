@@ -10,6 +10,7 @@
 #include "Vessel.h"
 #include "Solver.h"
 #include "Maneuver.h"
+#include "Output.h"
 
 #include "include/nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -25,7 +26,7 @@ json readJSON(std::string filename)
 
 int main(int argc, char **argv)
 {
-	std::cout << "KOZMOWORKS Orbit Propagator\n\n";
+	std::cout << "\nKOZMOWORKS Astrodynamics Simulator\n\n";
 	if (argc != 2) {
 		std::cout << "Please enter a single mission filename to simulate. Quitting...\n\n";
 		return 0;
@@ -145,40 +146,41 @@ int main(int argc, char **argv)
 	std::cout << "Initializing solver...\n";
 	Yoshida8 Y8 = Yoshida8(bodies, vessels, impulsive_maneuvers, const_accel_maneuvers);
 
-	// these two below are placeholders
-	std::vector<Vec3> positions;
-	std::vector<Vec3> positions2;
+	// import plots
+	std::cout << "Creating plots...\n";
+	std::vector<Plot> plots;
+
+	for (auto p : mission_json["plots"])
+	{
+		int new_id = p["id"];
+		int new_target_id = p["target_id"];
+		int new_frame_id = p["frame_id"];
+		std::string new_data_type = p["data_type"];
+
+		Plot new_plot = Plot(Y8, new_id, new_target_id, new_frame_id, new_data_type);
+		plots.push_back(new_plot);
+	}
 
 	// do physics
-	std::cout << "Simulating...\n";
+	std::cout << "\n= = = SIMULATION STARTED = = =\n";
 	while (time < end_time)
 	{	
 		Y8.step(dt, time);
 		time += dt;
 
-		positions.push_back(Y8.vessels[0].pos - Y8.bodies[0].pos);
-		positions2.push_back(Y8.vessels[1].pos - Y8.bodies[0].pos);
+		for (auto& p : plots)
+		{
+			p.recordStep();
+		}
 	}
+	std::cout << "= = =  SIMULATION ENDED  = = =\n\n";
 
-	// output positions to file
-	// this should ideally be a modular thing
-	// it stays here for now for testing purposes
+	// output recorded data to files
 	std::cout << "Writing results...\n";
-	std::ofstream outfile;
-	outfile.open("./output/output.csv");
-	for (auto &pos : positions)
+	for (auto& p : plots)
 	{
-		outfile << pos.x << ", " << pos.y << ", " << pos.z << "\n";
+		p.exportData();
 	}
-	outfile.close();
-
-	std::ofstream outfile2;
-	outfile2.open("./output/output2.csv");
-	for (auto& pos : positions2)
-	{
-		outfile2 << pos.x << ", " << pos.y << ", " << pos.z << "\n";
-	}
-	outfile2.close();
 
 	std::cout << "Done!\n";
 	return 0;

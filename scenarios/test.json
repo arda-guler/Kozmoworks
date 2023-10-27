@@ -118,6 +118,27 @@
       "perform_time": 1200,
       "prop_expenditure": 120
     }
+  },
+
+  "plots": {
+    "plot_sat_pos": {
+      "id": 9000,
+      "target_id": 2,
+      "frame_id": 0,
+      "data_type": "pos"
+    },
+    "plot_sat_vel": {
+      "id": 9001,
+      "target_id": 2,
+      "frame_id": 0,
+      "data_type": "vel"
+    },
+    "plot_sat_rel_vel": {
+      "id": 9002,
+      "target_id": 2,
+      "frame_id": 3,
+      "data_type": "vel"
+    }
   }
 
 }
