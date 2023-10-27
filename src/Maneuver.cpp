@@ -70,6 +70,12 @@ void ImpulsiveManeuver::perform(double time, std::vector<Body>& bodies, std::vec
 			if (v.id == test_id)
 			{
 				v.vel = v.vel + this->direction * this->delta_v;
+				v.mass = v.mass - this->prop_expenditure;
+				v.prop_mass = v.prop_mass - this->prop_expenditure;
+				if (v.prop_mass < 0 || v.mass < 0)
+				{
+					std::cout << "\nWARNING: A vessel was left with a negative wet mass or negative propellant mass after an orbital maneuver!\n";
+				}
 				break;
 			}
 		}
@@ -91,6 +97,26 @@ void ConstAccelManeuver::perform(double time, std::vector<Body>& bodies, std::ve
 	// this maneuver has ended
 	if (this->status != 2 && time > this->end_time)
 	{
+		for (auto& v : vessels)
+		{
+			// check if vessel id is in maneuver vessel ids
+			// (i.e. "Is this one of those vessels that are included in this maneuver?")
+			// then remove the expended propellant amount
+			for (auto test_id : this->vessel_ids)
+			{
+				if (v.id == test_id)
+				{
+					v.mass = v.mass - this->prop_expenditure;
+					v.prop_mass = v.prop_mass - this->prop_expenditure;
+
+					if (v.prop_mass < 0 || v.mass < 0)
+					{
+						std::cout << "\nWARNING: A vessel was left with a negative wet mass or negative propellant mass after an orbital maneuver!\n";
+					}
+					break;
+				}
+			}
+		}
 		this->status = 2;
 		return;
 	}

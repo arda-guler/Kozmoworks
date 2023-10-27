@@ -62,13 +62,13 @@
         [ 0, 0, 1 ]
       ],
       "ang_vel": [ 0, 0, 0 ],
-      "mass": 100,
+      "mass": 1000,
       "moment_of_inertia": [
         [ 1, 0, 0 ],
         [ 0, 1, 0 ],
         [ 0, 0, 1 ]
       ],
-      "prop_mass": 0
+      "prop_mass": 200
     },
 
     "satellite2": {
@@ -82,13 +82,13 @@
         [ 0, 0, 1 ]
       ],
       "ang_vel": [ 0, 0, 0 ],
-      "mass": 100,
+      "mass": 1000,
       "moment_of_inertia": [
         [ 1, 0, 0 ],
         [ 0, 1, 0 ],
         [ 0, 0, 1 ]
       ],
-      "prop_mass": 0
+      "prop_mass": 200
     }
   },
 
@@ -100,7 +100,8 @@
       "direction": [ 0, 0, 0 ],
       "rel_dir": "normal",
       "delta_v": 1,
-      "perform_time": 6000
+      "perform_time": 6000,
+      "prop_expenditure": 0
     }
   },
 
@@ -114,7 +115,8 @@
       "delta_v": 3000,
       "accel": 0,
       "duration": 12000,
-      "perform_time": 1200
+      "perform_time": 1200,
+      "prop_expenditure": 120
     }
   }
 

@@ -96,17 +96,15 @@ int main(int argc, char **argv)
 		std::string new_reldir = im["rel_dir"];
 		double new_delta_v = im["delta_v"];
 		double new_perform_time = im["perform_time"];
+		double new_prop_expenditure = im["prop_expenditure"];
 
 		ImpulsiveManeuver new_imp_mnv = ImpulsiveManeuver(new_id, new_vessel_ids, new_frame_id,
-			new_direction, new_reldir, new_delta_v, new_perform_time);
+			new_direction, new_reldir, new_delta_v, new_perform_time, new_prop_expenditure);
 
 		impulsive_maneuvers.push_back(new_imp_mnv);
 	}
 
 	// import constant acceleration maneuvers
-	/*int pid, std::vector<int> pvessel_ids, int pframe_id,
-		Vec3 pdirection, std::string preldir, double pdelta_v, double accel_duration,
-		double pperform_time, std::string accel_or_duration*/
 	std::cout << "Importing constant acceleration maneuvers...\n";
 	for (auto cam : mission_json["const_accel_maneuvers"])
 	{
@@ -119,18 +117,19 @@ int main(int argc, char **argv)
 		double new_accel = cam["accel"];
 		double new_duration = cam["duration"];
 		double new_perform_time = cam["perform_time"];
+		double new_prop_expenditure = cam["prop_expenditure"];
 
 		if (new_accel == 0)
 		{
 			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessel_ids, new_frame_id,
-				new_direction, new_reldir, new_delta_v, new_duration, new_perform_time, "duration");
+				new_direction, new_reldir, new_delta_v, new_duration, new_perform_time, "duration", new_prop_expenditure);
 
 			const_accel_maneuvers.push_back(new_const_accel_mnv);
 		}
 		else
 		{
 			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessel_ids, new_frame_id,
-				new_direction, new_reldir, new_delta_v, new_accel, new_perform_time, "accel");
+				new_direction, new_reldir, new_delta_v, new_accel, new_perform_time, "accel", new_prop_expenditure);
 
 			const_accel_maneuvers.push_back(new_const_accel_mnv);
 		}

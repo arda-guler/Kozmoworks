@@ -22,9 +22,11 @@ public:
 	std::string reldir;
 	double delta_v;
 	double perform_time;
+	double prop_expenditure;
 
 	ImpulsiveManeuver(int pid, std::vector<int> pvessel_ids, int pframe_id,
-		Vec3 pdirection, std::string preldir, double pdelta_v, double pperform_time)
+		Vec3 pdirection, std::string preldir, double pdelta_v, double pperform_time,
+		double pprop_expenditure)
 	{
 		id = pid;
 		vessel_ids = pvessel_ids;
@@ -33,6 +35,7 @@ public:
 		reldir = preldir;
 		delta_v = pdelta_v;
 		perform_time = pperform_time;
+		prop_expenditure = pprop_expenditure;
 	}
 
 	void perform(double time, std::vector<Body>&, std::vector<Vessel>&);
@@ -57,10 +60,11 @@ public:
 	double perform_duration;
 	double perform_time;
 	double end_time;
+	double prop_expenditure;
 
 	ConstAccelManeuver(int pid, std::vector<int> pvessel_ids, int pframe_id,
 		Vec3 pdirection, std::string preldir, double pdelta_v, double accel_duration,
-		double pperform_time, std::string accel_or_duration)
+		double pperform_time, std::string accel_or_duration, double pprop_expenditure)
 	{
 		id = pid;
 		vessel_ids = pvessel_ids;
@@ -82,8 +86,9 @@ public:
 		}
 
 		perform_time = pperform_time;
-
 		end_time = perform_time + perform_duration;
+
+		prop_expenditure = pprop_expenditure;
 	}
 
 	void perform(double time, std::vector<Body>&, std::vector<Vessel>&);
