@@ -60,7 +60,6 @@ void ImpulsiveManeuver::perform(double time)
 		{
 			std::cout << "\nWARNING: A vessel was left with a negative wet mass or negative propellant mass after an orbital maneuver!\n";
 		}
-		break;
 	}
 
 	// The maneuver has been performed. Make sure it is not performed again.
