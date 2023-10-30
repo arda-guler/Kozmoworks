@@ -9,10 +9,10 @@
 class Solver
 {
 public:
-	std::vector<Body> bodies;
-	std::vector<Vessel> vessels;
-	std::vector<ImpulsiveManeuver> impulsive_maneuvers;
-	std::vector<ConstAccelManeuver> const_accel_maneuvers;
+	std::vector<Body>* bodies;
+	std::vector<Vessel>* vessels;
+	std::vector<ImpulsiveManeuver>* impulsive_maneuvers;
+	std::vector<ConstAccelManeuver>* const_accel_maneuvers;
 
 	Solver() {}
 
@@ -22,8 +22,8 @@ class SymplecticEuler : public Solver
 {
 public:
 
-	SymplecticEuler(std::vector<Body> pbodies, std::vector<Vessel> pvessels,
-		std::vector<ImpulsiveManeuver> pimpulsive_maneuvers)
+	SymplecticEuler(std::vector<Body>* pbodies, std::vector<Vessel>* pvessels,
+		std::vector<ImpulsiveManeuver>* pimpulsive_maneuvers)
 	{
 		bodies = pbodies;
 		vessels = pvessels;
@@ -37,9 +37,9 @@ class Yoshida8 : public Solver
 {
 public:
 
-	Yoshida8(std::vector<Body> pbodies, std::vector<Vessel> pvessels,
-		std::vector<ImpulsiveManeuver> pimpulsive_maneuvers,
-		std::vector<ConstAccelManeuver> pconst_accel_maneuvers)
+	Yoshida8(std::vector<Body>* pbodies, std::vector<Vessel>* pvessels,
+		std::vector<ImpulsiveManeuver>* pimpulsive_maneuvers,
+		std::vector<ConstAccelManeuver>* pconst_accel_maneuvers)
 	{
 		bodies = pbodies;
 		vessels = pvessels;

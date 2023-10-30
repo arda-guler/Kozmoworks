@@ -4,20 +4,19 @@
 
 void SymplecticEuler::step(double dt, double time)
 {
-	for (auto& v : this->vessels)
+	for (auto& v : *this->vessels)
 	{
 		// sum all gravitational acceleration due to bodies
 		Vec3 grav_vector = Vec3();
-		for (auto b : this->bodies)
+		for (auto b : *this->bodies)
 		{
 			grav_vector = grav_vector + b.getGravity(v.pos, false);
 		}
 
 		v.applyAccel(grav_vector);
-		
 	}
 
-	for (auto& v : this->vessels)
+	for (auto& v : *this->vessels)
 	{
 		v.vel = v.vel + v.accel * dt;
 		v.pos = v.pos + v.vel * dt;
@@ -46,21 +45,21 @@ void Yoshida8::step(double dt, double time)
 	for (int i = 0; i < 15; i++)
 	{
 		// -- update pos
-		for (auto& b : this->bodies)
+		for (auto& b : *this->bodies)
 		{
 			b.pos = b.pos + b.vel * cs[i] * dt;
 		}
-		for (auto& v : this->vessels)
+		for (auto& v : *this->vessels)
 		{
 			v.pos = v.pos + v.vel * cs[i] * dt;
 		}
 
 		// -- compute accels
-		for (auto& b : this->bodies)
+		for (auto& b : *this->bodies)
 		{
 			// gravitational accel
 			Vec3 grav_accel = Vec3();
-			for (auto& b2 : this->bodies)
+			for (auto& b2 : *this->bodies)
 			{
 				if (b.pos.x != b2.pos.x &&
 					b.pos.y != b2.pos.y &&
@@ -72,11 +71,11 @@ void Yoshida8::step(double dt, double time)
 			b.applyAccel(grav_accel);
 		}
 
-		for (auto& v : this->vessels)
+		for (auto& v : *this->vessels)
 		{
 			// gravitational accel
 			Vec3 grav_accel = Vec3();
-			for (auto& b : this->bodies)
+			for (auto& b : *this->bodies)
 			{
 				grav_accel = grav_accel + b.getGravity(v.pos, false);
 			}
@@ -84,18 +83,18 @@ void Yoshida8::step(double dt, double time)
 		}
 
 		// const. accel. mnv. accel
-		for (auto& cam : this->const_accel_maneuvers)
+		for (auto& cam : *this->const_accel_maneuvers)
 		{
-			cam.perform(time, this->bodies, this->vessels);
+			cam.perform(time);
 		}
 
 		// -- update vel
-		for (auto& b : this->bodies)
+		for (auto& b : *this->bodies)
 		{
 			b.vel = b.vel + b.accel * ds[i] * dt;
 			b.clearAccels();
 		}
-		for (auto& v : this->vessels)
+		for (auto& v : *this->vessels)
 		{
 			v.vel = v.vel + v.accel * ds[i] * dt;
 			v.clearAccels();
@@ -104,19 +103,19 @@ void Yoshida8::step(double dt, double time)
 	}
 
 	// -- final position update
-	for (auto& b : this->bodies)
+	for (auto& b : *this->bodies)
 	{
 		b.pos = b.pos + b.vel * cs[15] * dt;
 	}
-	for (auto& v : this->vessels)
+	for (auto& v : *this->vessels)
 	{
 		v.pos = v.pos + v.vel * cs[15] * dt;
 	}
 
 	// impulsive maneuvers
-	for (auto& m : this->impulsive_maneuvers)
+	for (auto& m : *this->impulsive_maneuvers)
 	{
-		m.perform(time, this->bodies, this->vessels);
+		m.perform(time);
 	}
 
 	// done!

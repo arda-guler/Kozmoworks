@@ -11,48 +11,40 @@ class ImpulsiveManeuver
 {
 public:
 	int id;
-	std::vector<int> vessel_ids;
-	int frame_id;
-
-	// 0 = pending
-	// 2 = completed
-	int status = 0;
-
+	std::vector<Vessel*> vessels;
+	Body* frame;
 	Vec3 direction;
 	std::string reldir;
 	double delta_v;
 	double perform_time;
 	double prop_expenditure;
 
-	ImpulsiveManeuver(int pid, std::vector<int> pvessel_ids, int pframe_id,
-		Vec3 pdirection, std::string preldir, double pdelta_v, double pperform_time,
-		double pprop_expenditure)
+	// 0 = pending
+	// 2 = completed
+	int status = 0;
+
+	ImpulsiveManeuver(int pid, std::vector<Vessel*> pvessels, Body* pframe, Vec3 pdir, std::string preldir,
+		double pdelta_v, double pperform_time, double pprop_expenditure)
 	{
 		id = pid;
-		vessel_ids = pvessel_ids;
-		frame_id = pframe_id;
-		direction = pdirection;
+		vessels = pvessels;
+		frame = pframe;
+		direction = pdir;
 		reldir = preldir;
 		delta_v = pdelta_v;
 		perform_time = pperform_time;
 		prop_expenditure = pprop_expenditure;
 	}
 
-	void perform(double time, std::vector<Body>&, std::vector<Vessel>&);
+	void perform(double time);
 };
 
 class ConstAccelManeuver
 {
 public:
 	int id;
-	std::vector<int> vessel_ids;
-	int frame_id;
-
-	// 0 = pending
-	// 1 = in progress
-	// 2 = completed
-	int status = 0;
-	
+	std::vector<Vessel*> vessels;
+	Body* frame;
 	Vec3 direction;
 	std::string reldir;
 	double delta_v;
@@ -62,14 +54,19 @@ public:
 	double end_time;
 	double prop_expenditure;
 
-	ConstAccelManeuver(int pid, std::vector<int> pvessel_ids, int pframe_id,
-		Vec3 pdirection, std::string preldir, double pdelta_v, double accel_duration,
+	// 0 = pending
+	// 1 = in progress
+	// 2 = completed
+	int status = 0;
+
+	ConstAccelManeuver(int pid, std::vector<Vessel*> pvessels, Body* pframe, Vec3 pdir,
+		std::string preldir, double pdelta_v, double accel_duration,
 		double pperform_time, std::string accel_or_duration, double pprop_expenditure)
 	{
 		id = pid;
-		vessel_ids = pvessel_ids;
-		frame_id = pframe_id;
-		direction = pdirection;
+		vessels = pvessels;
+		frame = pframe;
+		direction = pdir;
 		reldir = preldir;
 		delta_v = pdelta_v;
 
@@ -91,5 +88,5 @@ public:
 		prop_expenditure = pprop_expenditure;
 	}
 
-	void perform(double time, std::vector<Body>&, std::vector<Vessel>&);
+	void perform(double time);
 };

@@ -24,7 +24,7 @@ public:
 		data_type = pdata_type;
 
 		// look for target
-		for (auto& v : s.vessels)
+		for (auto& v : *s.vessels)
 		{
 			if (v.id == target_id)
 			{
@@ -36,7 +36,7 @@ public:
 		// look for frame
 		if (frame_id > -1)
 		{
-			for (auto& b : s.bodies)
+			for (auto& b : *s.bodies)
 			{
 				if (b.id == frame_id)
 				{

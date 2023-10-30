@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Maneuver.h"
 
-void ImpulsiveManeuver::perform(double time, std::vector<Body>& bodies, std::vector<Vessel>& vessels)
+void ImpulsiveManeuver::perform(double time)
 {
 	// check if it is not already performed and 
 	// the sim time is the right time to perform, quit if not
@@ -10,17 +10,8 @@ void ImpulsiveManeuver::perform(double time, std::vector<Body>& bodies, std::vec
 		return;
 	}
 
-	// get the framebody
-	Body frame = Body();
-	for (auto b : bodies)
-	{
-		if (b.id == this->frame_id)
-		{
-			frame = b;
-			break;
-		}
-	}
-
+	Body frame = *this->frame;
+	
 	// relative direction given, not vector
 	// burn direction has to be calculated when the maneuver is to
 	// be performed
@@ -28,7 +19,7 @@ void ImpulsiveManeuver::perform(double time, std::vector<Body>& bodies, std::vec
 	{
 		// NOTE: if there are multiple vessels performing the same maneuver,
 		// the first vessel in the vector is taken as reference
-		Vessel primary_vessel = vessels[0];
+		Vessel primary_vessel = *this->vessels[0];
 		if (this->reldir.compare("prograde") == 0)
 		{
 			this->direction = (primary_vessel.vel - frame.vel).normalized();
@@ -59,33 +50,24 @@ void ImpulsiveManeuver::perform(double time, std::vector<Body>& bodies, std::vec
 		}
 	}
 
-	// everything is ready
-	// perform the maneuver
-	for (auto& v : vessels)
+	for (auto &v : this->vessels) 
 	{
-		// check if vessel id is in maneuver vessel ids
-		// (i.e. "Is this one of those vessels that are included in this maneuver?")
-		for (auto test_id : this->vessel_ids) 
+
+		v->vel = v->vel + this->direction * this->delta_v;
+		v->mass = v->mass - this->prop_expenditure;
+		v->prop_mass = v->prop_mass - this->prop_expenditure;
+		if (v->prop_mass < 0 || v->mass < 0)
 		{
-			if (v.id == test_id)
-			{
-				v.vel = v.vel + this->direction * this->delta_v;
-				v.mass = v.mass - this->prop_expenditure;
-				v.prop_mass = v.prop_mass - this->prop_expenditure;
-				if (v.prop_mass < 0 || v.mass < 0)
-				{
-					std::cout << "\nWARNING: A vessel was left with a negative wet mass or negative propellant mass after an orbital maneuver!\n";
-				}
-				break;
-			}
+			std::cout << "\nWARNING: A vessel was left with a negative wet mass or negative propellant mass after an orbital maneuver!\n";
 		}
+		break;
 	}
 
-	// the maneuver has been performed. make sure it is not performed again.
+	// The maneuver has been performed. Make sure it is not performed again.
 	this->status = 2;
 }
 
-void ConstAccelManeuver::perform(double time, std::vector<Body>& bodies, std::vector<Vessel>& vessels)
+void ConstAccelManeuver::perform(double time)
 {
 	// check if it is not already performed and 
 	// the sim time is the right time to perform, quit if not
@@ -97,24 +79,14 @@ void ConstAccelManeuver::perform(double time, std::vector<Body>& bodies, std::ve
 	// this maneuver has ended
 	if (this->status != 2 && time > this->end_time)
 	{
-		for (auto& v : vessels)
+		for (auto& v : this->vessels)
 		{
-			// check if vessel id is in maneuver vessel ids
-			// (i.e. "Is this one of those vessels that are included in this maneuver?")
-			// then remove the expended propellant amount
-			for (auto test_id : this->vessel_ids)
-			{
-				if (v.id == test_id)
-				{
-					v.mass = v.mass - this->prop_expenditure;
-					v.prop_mass = v.prop_mass - this->prop_expenditure;
+			v->mass = v->mass - this->prop_expenditure;
+			v->prop_mass = v->prop_mass - this->prop_expenditure;
 
-					if (v.prop_mass < 0 || v.mass < 0)
-					{
-						std::cout << "\nWARNING: A vessel was left with a negative wet mass or negative propellant mass after an orbital maneuver!\n";
-					}
-					break;
-				}
+			if (v->prop_mass < 0 || v->mass < 0)
+			{
+				std::cout << "\nWARNING: A vessel was left with a negative wet mass or negative propellant mass after an orbital maneuver!\n";
 			}
 		}
 		this->status = 2;
@@ -127,17 +99,8 @@ void ConstAccelManeuver::perform(double time, std::vector<Body>& bodies, std::ve
 		this->status = 1;
 	}
 
-	// get the framebody
-	Body frame = Body();
-	for (auto b : bodies)
-	{
-		if (b.id == this->frame_id)
-		{
-			frame = b;
-			break;
-		}
-	}
-
+	Body frame = *this->frame;
+	
 	// relative direction given, not vector
 	// burn direction has to be calculated when the maneuver is to
 	// be performed
@@ -147,7 +110,7 @@ void ConstAccelManeuver::perform(double time, std::vector<Body>& bodies, std::ve
 		clear_direction_flag = true;
 		// NOTE: if there are multiple vessels performing the same maneuver,
 		// the first vessel in the vector is taken as reference
-		Vessel primary_vessel = vessels[0];
+		Vessel primary_vessel = *this->vessels[0];
 		if (this->reldir.compare("prograde") == 0)
 		{
 			this->direction = (primary_vessel.vel - frame.vel).normalized();
@@ -175,22 +138,6 @@ void ConstAccelManeuver::perform(double time, std::vector<Body>& bodies, std::ve
 		else if (this->reldir.compare("radial_in") == 0)
 		{
 			this->direction = (frame.pos - primary_vessel.pos).normalized();
-		}
-	}
-
-	// everything is ready
-	// perform the maneuver
-	for (auto& v : vessels)
-	{
-		// check if vessel id is in maneuver vessel ids
-		// (i.e. "Is this one of those vessels that are included in this maneuver?")
-		for (auto test_id : this->vessel_ids)
-		{
-			if (v.id == test_id)
-			{
-				v.accel = v.accel + this->direction * this->accel;
-				break;
-			}
 		}
 	}
 

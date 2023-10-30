@@ -99,7 +99,34 @@ int main(int argc, char **argv)
 		double new_perform_time = im["perform_time"];
 		double new_prop_expenditure = im["prop_expenditure"];
 
-		ImpulsiveManeuver new_imp_mnv = ImpulsiveManeuver(new_id, new_vessel_ids, new_frame_id,
+		// get the framebody
+		Body* new_frame_ptr;
+		for (auto &b : bodies)
+		{
+			if (b.id == new_frame_id)
+			{
+				new_frame_ptr = &b;
+				break;
+			}
+		}
+
+		// get the vessels
+		std::vector<Vessel*> new_vessels_ptr_vector;
+		for (auto& v : vessels)
+		{
+			// check if vessel id is in maneuver vessel ids
+			// (i.e. "Is this one of those vessels that are included in this maneuver?")
+			for (auto test_id : new_vessel_ids)
+			{
+				if (v.id == test_id)
+				{
+					new_vessels_ptr_vector.push_back(&v);
+					break;
+				}
+			}
+		}
+
+		ImpulsiveManeuver new_imp_mnv = ImpulsiveManeuver(new_id, new_vessels_ptr_vector, new_frame_ptr,
 			new_direction, new_reldir, new_delta_v, new_perform_time, new_prop_expenditure);
 
 		impulsive_maneuvers.push_back(new_imp_mnv);
@@ -120,16 +147,43 @@ int main(int argc, char **argv)
 		double new_perform_time = cam["perform_time"];
 		double new_prop_expenditure = cam["prop_expenditure"];
 
+		// get the framebody
+		Body* new_frame_ptr;
+		for (auto& b : bodies)
+		{
+			if (b.id == new_frame_id)
+			{
+				new_frame_ptr = &b;
+				break;
+			}
+		}
+
+		// get the vessels
+		std::vector<Vessel*> new_vessels_ptr_vector;
+		for (auto& v : vessels)
+		{
+			// check if vessel id is in maneuver vessel ids
+			// (i.e. "Is this one of those vessels that are included in this maneuver?")
+			for (auto test_id : new_vessel_ids)
+			{
+				if (v.id == test_id)
+				{
+					new_vessels_ptr_vector.push_back(&v);
+					break;
+				}
+			}
+		}
+
 		if (new_accel == 0)
 		{
-			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessel_ids, new_frame_id,
+			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessels_ptr_vector, new_frame_ptr,
 				new_direction, new_reldir, new_delta_v, new_duration, new_perform_time, "duration", new_prop_expenditure);
 
 			const_accel_maneuvers.push_back(new_const_accel_mnv);
 		}
 		else
 		{
-			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessel_ids, new_frame_id,
+			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessels_ptr_vector, new_frame_ptr,
 				new_direction, new_reldir, new_delta_v, new_accel, new_perform_time, "accel", new_prop_expenditure);
 
 			const_accel_maneuvers.push_back(new_const_accel_mnv);
@@ -144,7 +198,7 @@ int main(int argc, char **argv)
 
 	// initialize solver
 	std::cout << "Initializing solver...\n";
-	Yoshida8 Y8 = Yoshida8(bodies, vessels, impulsive_maneuvers, const_accel_maneuvers);
+	Yoshida8 Y8 = Yoshida8(&bodies, &vessels, &impulsive_maneuvers, &const_accel_maneuvers);
 
 	// import plots
 	std::cout << "Creating plots...\n";
