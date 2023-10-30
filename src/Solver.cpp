@@ -99,7 +99,6 @@ void Yoshida8::step(double dt, double time)
 			v.vel = v.vel + v.accel * ds[i] * dt;
 			v.clearAccels();
 		}
-
 	}
 
 	// -- final position update

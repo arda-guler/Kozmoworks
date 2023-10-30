@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if (new_accel == 0)
+		if (new_accel == 0.0)
 		{
 			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessels_ptr_vector, new_frame_ptr,
 				new_direction, new_reldir, new_delta_v, new_duration, new_perform_time, "duration", new_prop_expenditure);

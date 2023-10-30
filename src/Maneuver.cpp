@@ -141,6 +141,15 @@ void ConstAccelManeuver::perform(double time)
 		}
 	}
 
+	// everything is ready
+	// perform the maneuver
+	for (auto& v : this->vessels)
+	{
+		{
+			v->accel = v->accel + this->direction * this->accel;
+		}
+	}
+
 	// if a relative direction was given rather than a vector value,
 	// it should be updated each frame - clear the vector
 	if (clear_direction_flag) 
