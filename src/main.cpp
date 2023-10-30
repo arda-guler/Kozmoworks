@@ -198,7 +198,13 @@ int main(int argc, char **argv)
 
 	// initialize solver
 	std::cout << "Initializing solver...\n";
-	Yoshida8 Y8 = Yoshida8(&bodies, &vessels, &impulsive_maneuvers, &const_accel_maneuvers);
+	std::vector<Body>* bodies_ptr = &bodies;
+	std::vector<Vessel>* vessels_ptr = &vessels;
+	std::vector<ImpulsiveManeuver>* impulsive_maneuvers_ptr = &impulsive_maneuvers;
+	std::vector<ConstAccelManeuver>* const_accel_maneuvers_ptr = &const_accel_maneuvers;
+	Yoshida8 Y8 = Yoshida8(bodies_ptr, vessels_ptr, impulsive_maneuvers_ptr, const_accel_maneuvers_ptr);
+
+	Yoshida8* Y8ptr = &Y8;
 
 	// import plots
 	std::cout << "Creating plots...\n";
@@ -211,7 +217,29 @@ int main(int argc, char **argv)
 		int new_frame_id = p["frame_id"];
 		std::string new_data_type = p["data_type"];
 
-		Plot new_plot = Plot(Y8, new_id, new_target_id, new_frame_id, new_data_type);
+		// get the framebody
+		Body* new_frame_ptr;
+		for (auto& b : bodies)
+		{
+			if (b.id == new_frame_id)
+			{
+				new_frame_ptr = &b;
+				break;
+			}
+		}
+
+		// get the vessels
+		Vessel* new_target_ptr;
+		for (auto& v : vessels)
+		{
+			if (v.id == new_target_id)
+			{
+				new_target_ptr = &v;
+				break;
+			}
+		}
+
+		Plot new_plot = Plot(Y8ptr, new_id, new_target_ptr, new_frame_ptr, new_data_type);
 		plots.push_back(new_plot);
 	}
 

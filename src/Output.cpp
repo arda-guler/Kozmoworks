@@ -5,7 +5,7 @@
 
 void Plot::recordStep()
 {
-	if (this->frame_id < 0)
+	if (this->frame->id > 0)
 	{
 		if (this->data_type.compare("pos") == 0)
 		{

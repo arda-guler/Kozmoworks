@@ -6,45 +6,19 @@ class Plot
 {
 public:
 
-	Solver& s;
+	Solver* s;
 	int id;
-	int target_id;
-	int frame_id;
+	Vessel* target;
+	Body* frame;
 	std::string data_type;
 	std::vector<std::vector<double>> output_data;
 
-	Vessel* target;
-	Body* frame;
-
-	Plot(Solver &ps, int pid, int ptarget_id, int pframe_id, std::string pdata_type) : s(ps)
+	Plot(Solver* ps, int pid, Vessel* ptarget, Body* pframe, std::string pdata_type)
 	{
 		id = pid;
-		target_id = ptarget_id;
-		frame_id = pframe_id;
+		target = ptarget;
+		frame = pframe;
 		data_type = pdata_type;
-
-		// look for target
-		for (auto& v : *s.vessels)
-		{
-			if (v.id == target_id)
-			{
-				target = &v;
-				break;
-			}
-		}
-
-		// look for frame
-		if (frame_id > -1)
-		{
-			for (auto& b : *s.bodies)
-			{
-				if (b.id == frame_id)
-				{
-					frame = &b;
-					break;
-				}
-			}
-		}
 
 		if (data_type.compare("pos") == 0)
 		{
