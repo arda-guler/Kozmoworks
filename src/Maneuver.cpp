@@ -52,7 +52,6 @@ void ImpulsiveManeuver::perform(double time)
 
 	for (auto &v : this->vessels) 
 	{
-
 		v->vel = v->vel + this->direction * this->delta_v;
 		v->mass = v->mass - this->prop_expenditure;
 		v->prop_mass = v->prop_mass - this->prop_expenditure;

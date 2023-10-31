@@ -24,6 +24,52 @@ json readJSON(std::string filename)
 	return data;
 }
 
+Body* findBodyViaID(int body_id, std::vector<Body>* bodies_ptr)
+{
+	for (auto& b : *bodies_ptr)
+	{
+		if (b.id == body_id)
+		{
+			return &b;
+		}
+	}
+
+	std::cout << "Body not found!\n";
+	return nullptr;
+}
+
+Vessel* findVesselViaID(int vessel_id, std::vector<Vessel>* vessels_ptr)
+{
+	for (auto& v : *vessels_ptr)
+	{
+		if (v.id == vessel_id)
+		{
+			return &v;
+		}
+	}
+
+	std::cout << "Vessel not found!\n";
+	return nullptr;
+}
+
+std::vector<Vessel*> findVesselsViaID(std::vector<int> vessel_ids, std::vector<Vessel>* vessels_ptr)
+{
+	std::vector<Vessel*> found_vessels_ptrs;
+	for (auto search_id : vessel_ids)
+	{
+		for (auto& v : *vessels_ptr)
+		{
+			if (v.id == search_id)
+			{
+				found_vessels_ptrs.push_back(&v);
+				break;
+			}
+		}
+	}
+
+	return found_vessels_ptrs;
+}
+
 int main(int argc, char **argv)
 {
 	std::cout << "\nKOZMOWORKS Astrodynamics Simulator\n\n";
@@ -99,32 +145,9 @@ int main(int argc, char **argv)
 		double new_perform_time = im["perform_time"];
 		double new_prop_expenditure = im["prop_expenditure"];
 
-		// get the framebody
-		Body* new_frame_ptr;
-		for (auto &b : bodies)
-		{
-			if (b.id == new_frame_id)
-			{
-				new_frame_ptr = &b;
-				break;
-			}
-		}
-
-		// get the vessels
-		std::vector<Vessel*> new_vessels_ptr_vector;
-		for (auto& v : vessels)
-		{
-			// check if vessel id is in maneuver vessel ids
-			// (i.e. "Is this one of those vessels that are included in this maneuver?")
-			for (auto test_id : new_vessel_ids)
-			{
-				if (v.id == test_id)
-				{
-					new_vessels_ptr_vector.push_back(&v);
-					break;
-				}
-			}
-		}
+		// get the framebody and vessels
+		Body* new_frame_ptr = findBodyViaID(new_frame_id, &bodies);
+		std::vector<Vessel*> new_vessels_ptr_vector = findVesselsViaID(new_vessel_ids, &vessels);
 
 		ImpulsiveManeuver new_imp_mnv = ImpulsiveManeuver(new_id, new_vessels_ptr_vector, new_frame_ptr,
 			new_direction, new_reldir, new_delta_v, new_perform_time, new_prop_expenditure);
@@ -147,33 +170,11 @@ int main(int argc, char **argv)
 		double new_perform_time = cam["perform_time"];
 		double new_prop_expenditure = cam["prop_expenditure"];
 
-		// get the framebody
-		Body* new_frame_ptr;
-		for (auto& b : bodies)
-		{
-			if (b.id == new_frame_id)
-			{
-				new_frame_ptr = &b;
-				break;
-			}
-		}
+		// get the framebody and vessels
+		Body* new_frame_ptr = findBodyViaID(new_frame_id, &bodies);
+		std::vector<Vessel*> new_vessels_ptr_vector = findVesselsViaID(new_vessel_ids, &vessels);
 
-		// get the vessels
-		std::vector<Vessel*> new_vessels_ptr_vector;
-		for (auto& v : vessels)
-		{
-			// check if vessel id is in maneuver vessel ids
-			// (i.e. "Is this one of those vessels that are included in this maneuver?")
-			for (auto test_id : new_vessel_ids)
-			{
-				if (v.id == test_id)
-				{
-					new_vessels_ptr_vector.push_back(&v);
-					break;
-				}
-			}
-		}
-
+		// initialize according to whether the acceleration or the duration is given
 		if (new_accel == 0.0)
 		{
 			ConstAccelManeuver new_const_accel_mnv = ConstAccelManeuver(new_id, new_vessels_ptr_vector, new_frame_ptr,
