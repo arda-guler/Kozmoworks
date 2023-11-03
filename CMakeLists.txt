@@ -15,4 +15,5 @@ add_executable(Kozmoworks
 	src/Solver.cpp
 	src/Vector3.cpp
 	src/Output.cpp
- )
+	src/Atmosphere.cpp
+)

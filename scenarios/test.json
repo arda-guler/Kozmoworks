@@ -1,7 +1,7 @@
 {
   "start_time": 0,
   "dt": 1,
-  "end_time": 100000,
+  "end_time": 250000,
 
   "bodies": {
 
@@ -94,14 +94,25 @@
 
   "impulsive_maneuvers": {
     "mnv1": {
-      "id": 3005,
+      "id": 3001,
       "vessel_ids": [ 2 ],
       "frame_id": 0,
       "direction": [ 0, 0, 0 ],
-      "rel_dir": "normal",
-      "delta_v": 1,
+      "rel_dir": "retrograde",
+      "delta_v": 210,
       "perform_time": 6000,
-      "prop_expenditure": 0
+      "prop_expenditure": 120
+    },
+
+    "mnv2": {
+      "id": 3002,
+      "vessel_ids": [ 3 ],
+      "frame_id": 0,
+      "direction": [ 0, 0, 0 ],
+      "rel_dir": "retrograde",
+      "delta_v": 210,
+      "perform_time": 6000,
+      "prop_expenditure": 120
     }
   },
 
@@ -112,11 +123,11 @@
       "frame_id": 0,
       "direction": [ 0, 0, 0 ],
       "rel_dir": "prograde",
-      "delta_v": 3000,
+      "delta_v": 0,
       "accel": 0,
-      "duration": 12000,
-      "perform_time": 1200,
-      "prop_expenditure": 120
+      "duration": 1,
+      "perform_time": 6000,
+      "prop_expenditure": 0
     }
   },
 
@@ -127,17 +138,48 @@
       "frame_id": 0,
       "data_type": "pos"
     },
-    "plot_sat_vel": {
+    "plot_sat2_pos": {
       "id": 9001,
-      "target_id": 2,
+      "target_id": 3,
       "frame_id": 0,
-      "data_type": "vel"
+      "data_type": "pos"
     },
-    "plot_sat_rel_vel": {
+    "plot_sat_alt": {
       "id": 9002,
       "target_id": 2,
-      "frame_id": 3,
-      "data_type": "vel"
+      "frame_id": 0,
+      "data_type": "alt"
+    },
+    "plot_sat2_alt": {
+      "id": 9003,
+      "target_id": 3,
+      "frame_id": 0,
+      "data_type": "alt"
+    },
+    "plot_sat_vel": {
+      "id": 9004,
+      "target_id": 2,
+      "frame_id": 0,
+      "data_type": "vel_mag"
+    },
+    "plot_sat2_vel": {
+      "id": 9005,
+      "target_id": 3,
+      "frame_id": 0,
+      "data_type": "vel_mag"
+    }
+  },
+
+  "expo_atmos": {
+    "earth_atmo1": {
+      "id": 10001,
+      "target_id": 2,
+      "frame_id": 0,
+      "base_density": 1.3,
+      "scale_height": 7000,
+      "Cd": 2.2,
+      "drag_area": 15,
+      "max_alt": 1300000 
     }
   }
 

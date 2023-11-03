@@ -60,4 +60,5 @@ public:
 	}
 
 	Vec3 getGravity(Vec3 tpos, bool harmonics);
+	Vec3 getTangentialVel(Vec3 tpos);
 };

@@ -20,3 +20,10 @@ Vec3 Body::getGravity(Vec3 tpos, bool harmonics=false)
 		return grav_dir * grav_mag;
 	}
 }
+
+// get the linear velocity of a point rotating together with the body
+Vec3 Body::getTangentialVel(Vec3 tpos)
+{
+	Vec3 lin_vel = this->ang_vel.cross(tpos - this->pos);
+	return lin_vel;
+}

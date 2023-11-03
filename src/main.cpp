@@ -11,6 +11,7 @@
 #include "Solver.h"
 #include "Maneuver.h"
 #include "Output.h"
+#include "Atmosphere.h"
 
 #include "include/nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -85,6 +86,8 @@ int main(int argc, char **argv)
 	std::vector<Vessel> vessels;
 	std::vector<ImpulsiveManeuver> impulsive_maneuvers;
 	std::vector<ConstAccelManeuver> const_accel_maneuvers;
+	std::vector<PolyAtmo> poly_atmos;
+	std::vector<ExpoAtmo> expo_atmos;
 
 	std::cout << "Reading mission file:" << mission_filename << "\n";
 	json mission_json = readJSON(mission_filename);
@@ -191,6 +194,51 @@ int main(int argc, char **argv)
 		}
 	}
 
+	// import atmospheric drag effects
+	std::cout << "Importing atmospheric drag effects...\n";
+	for (auto pad : mission_json["poly_atmos"])
+	{
+		int new_id = pad["id"];
+		int new_target_id = pad["target_id"];
+		int new_frame_id = pad["frame_id"];
+		std::vector<double> new_poly_coeffs = pad["poly_coeffs"];
+		double new_Cd = pad["Cd"];
+		double new_area = pad["drag_area"];
+		double new_max_alt = pad["max_alt"];
+
+		Vessel* new_target_ptr = findVesselViaID(new_target_id, &vessels);
+		Body* new_frame_ptr = findBodyViaID(new_frame_id, &bodies);
+
+		double new_max_R = new_max_alt + new_frame_ptr->Rmin;
+
+		PolyAtmo new_atmo_drag = PolyAtmo(new_id, new_poly_coeffs, new_Cd, new_area, new_max_R,
+			new_frame_ptr, new_target_ptr);
+
+		poly_atmos.push_back(new_atmo_drag);
+	}
+
+	for (auto ead : mission_json["expo_atmos"])
+	{
+		int new_id = ead["id"];
+		int new_target_id = ead["target_id"];
+		int new_frame_id = ead["frame_id"];
+		double new_base_density = ead["base_density"];
+		double new_scale_height = ead["scale_height"];
+		double new_Cd = ead["Cd"];
+		double new_area = ead["drag_area"];
+		double new_max_alt = ead["max_alt"];
+
+		Vessel* new_target_ptr = findVesselViaID(new_target_id, &vessels);
+		Body* new_frame_ptr = findBodyViaID(new_frame_id, &bodies);
+
+		double new_max_R = new_max_alt + new_frame_ptr->Rmin;
+
+		ExpoAtmo new_expo_atmo = ExpoAtmo(new_id, new_base_density, new_scale_height, 
+			new_Cd, new_area, new_max_R, new_frame_ptr, new_target_ptr);
+
+		expo_atmos.push_back(new_expo_atmo);
+	}
+
 	// import simulation parameters
 	std::cout << "Importing simulation parameters...\n";
 	double time = mission_json["start_time"];
@@ -203,7 +251,10 @@ int main(int argc, char **argv)
 	std::vector<Vessel>* vessels_ptr = &vessels;
 	std::vector<ImpulsiveManeuver>* impulsive_maneuvers_ptr = &impulsive_maneuvers;
 	std::vector<ConstAccelManeuver>* const_accel_maneuvers_ptr = &const_accel_maneuvers;
-	Yoshida8 Y8 = Yoshida8(bodies_ptr, vessels_ptr, impulsive_maneuvers_ptr, const_accel_maneuvers_ptr);
+	std::vector<PolyAtmo>* poly_atmos_ptr = &poly_atmos;
+	std::vector<ExpoAtmo>* expo_atmos_ptr = &expo_atmos;
+	Yoshida8 Y8 = Yoshida8(bodies_ptr, vessels_ptr, impulsive_maneuvers_ptr, const_accel_maneuvers_ptr,
+		poly_atmos_ptr, expo_atmos_ptr);
 
 	Yoshida8* Y8ptr = &Y8;
 
@@ -245,15 +296,34 @@ int main(int argc, char **argv)
 	}
 
 	// do physics
+	int cycles = 0;
+	bool simulation_running = true;
 	std::cout << "\n= = = SIMULATION STARTED = = =\n";
-	while (time < end_time)
+	while (time <= end_time && simulation_running)
 	{	
-		Y8.step(dt, time);
-		time += dt;
-
+		// update plots
 		for (auto& p : plots)
 		{
 			p.recordStep();
+		}
+
+		// run physics solver
+		Y8.step(dt, time);
+
+		// update time
+		cycles++;
+		time = cycles * dt;
+
+		// TEMPORARY: Check if any vessel has crashed
+		for (auto &v: *Y8ptr->vessels)
+		{
+			for (auto& b : *Y8ptr->bodies)
+			{
+				if ((v.pos - b.pos).mag() < b.Rmax)
+				{
+					simulation_running = false;
+				}
+			}
 		}
 	}
 	std::cout << "= = =  SIMULATION ENDED  = = =\n\n";

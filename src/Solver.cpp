@@ -88,6 +88,17 @@ void Yoshida8::step(double dt, double time)
 			cam.perform(time);
 		}
 
+		// atmospheric drag accel
+		for (auto& pad : *this->poly_atmos)
+		{
+			pad.apply();
+		}
+
+		for (auto& ead : *this->expo_atmos)
+		{
+			ead.apply();
+		}
+
 		// -- update vel
 		for (auto& b : *this->bodies)
 		{

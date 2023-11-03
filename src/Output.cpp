@@ -5,59 +5,41 @@
 
 void Plot::recordStep()
 {
-	if (this->frame->id > 0)
+	switch (this->data_type_tag)
 	{
-		if (this->data_type.compare("pos") == 0)
-		{
-			this->output_data[0].push_back(this->target->pos.x);
-			this->output_data[1].push_back(this->target->pos.y);
-			this->output_data[2].push_back(this->target->pos.z);
-		}
-		else if (this->data_type.compare("vel") == 0)
-		{
-			this->output_data[0].push_back(this->target->vel.x);
-			this->output_data[1].push_back(this->target->vel.y);
-			this->output_data[2].push_back(this->target->vel.z);
-		}
-		else if (this->data_type.compare("accel") == 0)
-		{
-			this->output_data[0].push_back(this->target->accel.x);
-			this->output_data[1].push_back(this->target->accel.y);
-			this->output_data[2].push_back(this->target->accel.z);
-		}
-		else if (this->data_type.compare("mass") == 0)
-		{
-			this->output_data[0].push_back(this->target->mass);
-		}
+	case 1: // pos
+		this->output_data[0].push_back(this->target->pos.x - this->frame->pos.x);
+		this->output_data[1].push_back(this->target->pos.y - this->frame->pos.y);
+		this->output_data[2].push_back(this->target->pos.z - this->frame->pos.z);
+		break;
+	case 2: // vel
+		this->output_data[0].push_back(this->target->vel.x - this->frame->vel.x);
+		this->output_data[1].push_back(this->target->vel.y - this->frame->vel.y);
+		this->output_data[2].push_back(this->target->vel.z - this->frame->vel.z);
+		break;
+	case 3: // accel
+		this->output_data[0].push_back(this->target->accel.x - this->frame->accel.x);
+		this->output_data[1].push_back(this->target->accel.y - this->frame->accel.y);
+		this->output_data[2].push_back(this->target->accel.z - this->frame->accel.z);
+		break;
+	case 4: // mass
+		this->output_data[0].push_back(this->target->mass);
+		break;
+	case 5: // propellant mass
+		this->output_data[0].push_back(this->target->prop_mass);
+		break;
+	case 6: // R / pos mag
+		this->output_data[0].push_back((this->target->pos - this->frame->pos).mag());
+		break;
+	case 7: // alt
+		// TODO: Implement an R-at-latitude func and use that instead of an Rmin comparison
+		this->output_data[0].push_back((this->target->pos - this->frame->pos).mag() - this->frame->Rmin);
+		break;
+	case 8: // vel mag
+		this->output_data[0].push_back((this->target->vel - this->frame->vel).mag());
+	case 9: // accel mag
+		this->output_data[0].push_back((this->target->accel - this->frame->accel).mag());
 	}
-	else 
-	{
-		if (this->data_type.compare("pos") == 0)
-		{
-			this->output_data[0].push_back(this->target->pos.x - this->frame->pos.x);
-			this->output_data[1].push_back(this->target->pos.y - this->frame->pos.y);
-			this->output_data[2].push_back(this->target->pos.z - this->frame->pos.z);
-		}
-		else if (this->data_type.compare("vel") == 0)
-		{
-			this->output_data[0].push_back(this->target->vel.x - this->frame->vel.x);
-			this->output_data[1].push_back(this->target->vel.y - this->frame->vel.y);
-			this->output_data[2].push_back(this->target->vel.z - this->frame->vel.z);
-		}
-		else if (this->data_type.compare("accel") == 0)
-		{
-			this->output_data[0].push_back(this->target->accel.x - this->frame->accel.x);
-			this->output_data[1].push_back(this->target->accel.y - this->frame->accel.y);
-			this->output_data[2].push_back(this->target->accel.z - this->frame->accel.z);
-		}
-		else if (this->data_type.compare("mass") == 0)
-		{
-			// I have no idea what this may be useful for at the moment, but it is 
-			// easily implementable so it shall be implemented
-			this->output_data[0].push_back(this->target->mass - this->frame->mass);
-		}
-	}
-	
 }
 
 void Plot::exportData()
