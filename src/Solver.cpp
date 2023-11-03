@@ -99,6 +99,12 @@ void Yoshida8::step(double dt, double time)
 			ead.apply();
 		}
 
+		// radiation pressure accel
+		for (auto& srp : *this->sph_rad_presses)
+		{
+			srp.apply();
+		}
+
 		// -- update vel
 		for (auto& b : *this->bodies)
 		{

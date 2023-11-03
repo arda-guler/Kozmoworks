@@ -16,4 +16,5 @@ add_executable(Kozmoworks
 	src/Vector3.cpp
 	src/Output.cpp
 	src/Atmosphere.cpp
+	src/RadiationPressure.cpp
 )

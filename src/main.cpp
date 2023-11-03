@@ -12,6 +12,7 @@
 #include "Maneuver.h"
 #include "Output.h"
 #include "Atmosphere.h"
+#include "RadiationPressure.h"
 
 #include "include/nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -88,6 +89,7 @@ int main(int argc, char **argv)
 	std::vector<ConstAccelManeuver> const_accel_maneuvers;
 	std::vector<PolyAtmo> poly_atmos;
 	std::vector<ExpoAtmo> expo_atmos;
+	std::vector<SphericalRadPress> sph_rad_presses;
 
 	std::cout << "Reading mission file:" << mission_filename << "\n";
 	json mission_json = readJSON(mission_filename);
@@ -239,6 +241,27 @@ int main(int argc, char **argv)
 		expo_atmos.push_back(new_expo_atmo);
 	}
 
+	// import radiation pressure effects
+	std::cout << "Importing radiation pressure effects...\n";
+	for (auto srp : mission_json["sph_rad_presses"])
+	{
+		int new_id = srp["id"];
+		int new_target_id = srp["target_id"];
+		int new_frame_id = srp["frame_id"];
+		double new_luminosity = srp["luminosity"];
+		double new_area = srp["rad_press_area"];
+		double new_reflectivity = srp["reflectivity"];
+		Vec3 new_normal = Vec3(srp["normal"]);
+
+		Vessel* new_target_ptr = findVesselViaID(new_target_id, &vessels);
+		Body* new_frame_ptr = findBodyViaID(new_frame_id, &bodies);
+
+		SphericalRadPress new_sph_rad_press = SphericalRadPress(new_id, new_luminosity, new_area, 
+			new_reflectivity, new_normal, new_frame_ptr, new_target_ptr);
+
+		sph_rad_presses.push_back(new_sph_rad_press);
+	}
+
 	// import simulation parameters
 	std::cout << "Importing simulation parameters...\n";
 	double time = mission_json["start_time"];
@@ -253,8 +276,9 @@ int main(int argc, char **argv)
 	std::vector<ConstAccelManeuver>* const_accel_maneuvers_ptr = &const_accel_maneuvers;
 	std::vector<PolyAtmo>* poly_atmos_ptr = &poly_atmos;
 	std::vector<ExpoAtmo>* expo_atmos_ptr = &expo_atmos;
+	std::vector<SphericalRadPress>* sph_rad_presses_ptr = &sph_rad_presses;
 	Yoshida8 Y8 = Yoshida8(bodies_ptr, vessels_ptr, impulsive_maneuvers_ptr, const_accel_maneuvers_ptr,
-		poly_atmos_ptr, expo_atmos_ptr);
+		poly_atmos_ptr, expo_atmos_ptr, sph_rad_presses_ptr);
 
 	Yoshida8* Y8ptr = &Y8;
 
