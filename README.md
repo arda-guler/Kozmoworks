@@ -4,13 +4,15 @@
 *Trajectory lines for two satellites maneuvering around Earth - scales in meters*
 
 **Kozmoworks** is an astrodynamics simulator, to-be successor of [OrbitSim3D](https://github.com/arda-guler/orbitSim3D), with similar features but faster computations. 
-This version currently **supports n-body problems** with **impulsive** or **finite-burn orbital maneuvering**. It features an **8th order symplectic orbit propagator**.
+This version features an **8th order symplectic orbit propagator** and currently supports **n-body problems** with:
+- impulsive orbital maneuvers
+- finite burn orbital maneuvers of constant acceleration type
+- atmospheric drag effects
 
 Mission scenarios are defined in .json files - see scenarios/test.json for an example.
 
-This is still a Work-In-Progress (TM) - many features are missing but intended for implementation:
+This is still a Work-In-Progress (TM) - some features are missing but intended for implementation:
 
-- Atmospheric drag
 - Radiation pressure
 - Spherical harmonics gravity
 - ...
