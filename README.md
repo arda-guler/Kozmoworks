@@ -8,11 +8,11 @@ This version features an **8th order symplectic orbit propagator** and currently
 - impulsive orbital maneuvers
 - finite burn orbital maneuvers of constant acceleration type
 - atmospheric drag effects
+- radiation pressure
 
 Mission scenarios are defined in .json files - see scenarios/test.json for an example.
 
 This is still a Work-In-Progress (TM) - some features are missing but intended for implementation:
 
-- Radiation pressure
-- Spherical harmonics gravity
+- spherical harmonics gravity
 - ...
