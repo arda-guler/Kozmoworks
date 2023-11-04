@@ -1,7 +1,7 @@
 {
   "start_time": 0,
-  "dt": 1,
-  "end_time": 250000,
+  "dt": 16,
+  "end_time": 40000,
 
   "bodies": {
 
@@ -98,8 +98,8 @@
       "vessel_ids": [ 2 ],
       "frame_id": 0,
       "direction": [ 0, 0, 0 ],
-      "rel_dir": "retrograde",
-      "delta_v": 210,
+      "rel_dir": "prograde",
+      "delta_v": 1000,
       "perform_time": 6000,
       "prop_expenditure": 120
     },
@@ -110,7 +110,7 @@
       "frame_id": 0,
       "direction": [ 0, 0, 0 ],
       "rel_dir": "retrograde",
-      "delta_v": 210,
+      "delta_v": 0,
       "perform_time": 6000,
       "prop_expenditure": 120
     }
@@ -123,9 +123,9 @@
       "frame_id": 0,
       "direction": [ 0, 0, 0 ],
       "rel_dir": "prograde",
-      "delta_v": 0,
+      "delta_v": 1000,
       "accel": 0,
-      "duration": 1,
+      "duration": 12000,
       "perform_time": 6000,
       "prop_expenditure": 0
     }
@@ -170,6 +170,14 @@
     }
   },
 
+  "time_plots": {
+    "tp1": {
+      "id": 9100,
+      "start_offset": 60252,
+      "time_unit": "days"
+    }
+  },
+
   "expo_atmos": {
     "earth_atmo1": {
       "id": 10001,
@@ -179,7 +187,19 @@
       "scale_height": 7000,
       "Cd": 2.2,
       "drag_area": 15,
-      "max_alt": 1300000 
+      "max_alt": 130000
+    }
+  },
+
+  "sph_rad_presses": {
+    "rpress1": {
+      "id": 12001,
+      "target_id": 2,
+      "frame_id": 0,
+      "luminosity": 3.828e26,
+      "rad_press_area": 1.5,
+      "reflectivity": 0.6,
+      "normal": [ 0, 0, 1 ]
     }
   }
 

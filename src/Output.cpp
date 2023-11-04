@@ -61,3 +61,34 @@ void Plot::exportData()
 
 	outfile.close();
 }
+
+void TimePlot::recordStep(double t)
+{
+	switch (this->data_type_tag) 
+	{
+	case 1: // seconds
+		this->times.push_back(this->start_time + t);
+		break;
+	case 2: // days
+		this->times.push_back(this->start_time + t / 86400);
+		break;
+	case 3: // years
+		this->times.push_back(this->start_time + t / 31536000);
+	}
+}
+
+void TimePlot::exportData()
+{
+	std::ofstream outfile;
+	std::string outfile_name = "./output/";
+	outfile_name = outfile_name + std::to_string(this->id) + ".csv";
+	std::cout << "Writing output file: " << outfile_name << "\n";
+	outfile.open(outfile_name);
+
+	for (auto timepoint : this->times)
+	{
+		outfile << timepoint << "\n";
+	}
+
+	outfile.close();
+}

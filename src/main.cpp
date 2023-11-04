@@ -283,8 +283,9 @@ int main(int argc, char **argv)
 	Yoshida8* Y8ptr = &Y8;
 
 	// import plots
-	std::cout << "Creating plots...\n";
+	std::cout << "Initializing plots...\n";
 	std::vector<Plot> plots;
+	std::vector<TimePlot> time_plots;
 
 	for (auto p : mission_json["plots"])
 	{
@@ -319,6 +320,16 @@ int main(int argc, char **argv)
 		plots.push_back(new_plot);
 	}
 
+	for (auto tp : mission_json["time_plots"])
+	{
+		int new_id = tp["id"];
+		double new_start_time = tp["start_offset"];
+		std::string new_time_unit = tp["time_unit"];
+		
+		TimePlot new_tp = TimePlot(new_id, new_start_time, new_time_unit);
+		time_plots.push_back(new_tp);
+	}
+
 	// do physics
 	int cycles = 0;
 	bool simulation_running = true;
@@ -329,6 +340,11 @@ int main(int argc, char **argv)
 		for (auto& p : plots)
 		{
 			p.recordStep();
+		}
+
+		for (auto& tp : time_plots)
+		{
+			tp.recordStep(time);
 		}
 
 		// run physics solver
@@ -357,6 +373,11 @@ int main(int argc, char **argv)
 	for (auto& p : plots)
 	{
 		p.exportData();
+	}
+
+	for (auto& tp : time_plots)
+	{
+		tp.exportData();
 	}
 
 	std::cout << "Done!\n";

@@ -107,3 +107,37 @@ public:
 	void exportData();
 
 };
+
+class TimePlot
+{
+public:
+	int id;
+	double start_time;
+	std::string time_unit;
+	std::vector<double> times;
+
+	int data_type_tag;
+
+	TimePlot(int pid, double pstart_time, std::string ptime_unit)
+	{
+		id = pid;
+		start_time = pstart_time;
+		time_unit = ptime_unit;
+
+		if (time_unit.compare("s") == 0 || time_unit.compare("seconds") == 0)
+		{
+			data_type_tag = 1;
+		}
+		else if (time_unit.compare("d") == 0 || time_unit.compare("days") == 0)
+		{
+			data_type_tag = 2;
+		}
+		else if (time_unit.compare("y") == 0 || time_unit.compare("years") == 0)
+		{
+			data_type_tag = 3;
+		}
+	}
+
+	void recordStep(double t);
+	void exportData();
+};
