@@ -1,0 +1,73 @@
+{
+  "start_time": 0,
+  "dt": 10,
+  "end_time": 20000,
+
+  "bodies": {
+
+    "Luna": {
+      "id": 0,
+
+      "pos": [ 0, 0, 0 ],
+      "vel": [ 0, 0, 0 ],
+      "orient": [
+        [ 1, 0, 0 ],
+        [ 0, 1, 0 ],
+        [ 0, 0, 1 ]
+      ],
+      "ang_vel": [ 0, 0, 0 ],
+      "mass": 7.342e22,
+      "moment_of_inertia": [
+        [ 1e36, 0, 0 ],
+        [ 0, 1e36, 0 ],
+        [ 0, 0, 1e36 ]
+      ],
+      "Rmin": 1738100,
+      "Rmax": 1736000,
+
+      "spherical_harmonics": 0
+    }
+
+  },
+
+  "vessels": {
+
+    "satellite": {
+      "id": 1000,
+
+      "pos": [ 1788100, 5, 5 ],
+      "vel": [ 0, 1700, 0 ],
+      "orient": [
+        [ 1, 0, 0 ],
+        [ 0, 1, 0 ],
+        [ 0, 0, 1 ]
+      ],
+      "ang_vel": [ 0, 0, 0 ],
+      "mass": 1000,
+      "moment_of_inertia": [
+        [ 1, 0, 0 ],
+        [ 0, 1, 0 ],
+        [ 0, 0, 1 ]
+      ],
+      "prop_mass": 200
+    }
+
+  },
+
+  "time_plots": {
+    "tp1": {
+      "id": 9100,
+      "start_offset": 0,
+      "time_unit": "seconds"
+    }
+  },
+
+  "plots": {
+    "plot_sat_pos": {
+      "id": 9000,
+      "target_id": 1000,
+      "frame_id": 0,
+      "data_type": "pos"
+    }
+  }
+}

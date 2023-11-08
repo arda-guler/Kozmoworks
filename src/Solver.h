@@ -7,6 +7,7 @@
 #include "Maneuver.h"
 #include "Atmosphere.h"
 #include "RadiationPressure.h"
+#include "SphericalHarmonics.h"
 
 class Solver
 {
@@ -18,6 +19,7 @@ public:
 	std::vector<PolyAtmo>* poly_atmos;
 	std::vector<ExpoAtmo>* expo_atmos;
 	std::vector<SphericalRadPress>* sph_rad_presses;
+	std::vector<SHGravity>* shgravities;
 
 	Solver() {}
 
@@ -47,7 +49,8 @@ public:
 		std::vector<ImpulsiveManeuver>* pimpulsive_maneuvers,
 		std::vector<ConstAccelManeuver>* pconst_accel_maneuvers,
 		std::vector<PolyAtmo>* ppoly_atmos, std::vector<ExpoAtmo>* pexpo_atmos,
-		std::vector<SphericalRadPress>* psph_rad_presses)
+		std::vector<SphericalRadPress>* psph_rad_presses,
+		std::vector<SHGravity>* pshgravities)
 	{
 		bodies = pbodies;
 		vessels = pvessels;
@@ -56,6 +59,7 @@ public:
 		poly_atmos = ppoly_atmos;
 		expo_atmos = pexpo_atmos;
 		sph_rad_presses = psph_rad_presses;
+		shgravities = pshgravities;
 	}
 
 	void step(double dt, double time);

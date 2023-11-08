@@ -7,7 +7,8 @@ void PolyAtmo::apply()
 	double R = (this->target->pos - this->parent->pos).mag();
 
 	// target too far away - no aero drag
-	if (R > this->max_R) {
+	if (R > this->max_R) 
+	{
 		return;
 	}
 
@@ -42,7 +43,8 @@ void ExpoAtmo::apply()
 	double R = (this->target->pos - this->parent->pos).mag();
 
 	// target too far away - no aero drag
-	if (R > this->max_R) {
+	if (R > this->max_R) 
+	{
 		return;
 	}
 

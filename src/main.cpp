@@ -13,6 +13,7 @@
 #include "Output.h"
 #include "Atmosphere.h"
 #include "RadiationPressure.h"
+#include "SphericalHarmonics.h"
 
 #include "include/nlohmann/json.hpp"
 using json = nlohmann::json;
@@ -90,6 +91,7 @@ int main(int argc, char **argv)
 	std::vector<PolyAtmo> poly_atmos;
 	std::vector<ExpoAtmo> expo_atmos;
 	std::vector<SphericalRadPress> sph_rad_presses;
+	std::vector<SHGravity> shgravities;
 
 	std::cout << "Reading mission file:" << mission_filename << "\n";
 	json mission_json = readJSON(mission_filename);
@@ -109,9 +111,10 @@ int main(int argc, char **argv)
 		Mtx3x3 new_MoI = Mtx3x3(b["moment_of_inertia"]);
 		double new_Rmin = b["Rmin"];
 		double new_Rmax = b["Rmax"];
+		int new_spherical_harmonics = b["spherical_harmonics"];
 		Body new_body = Body(new_id, new_pos, new_vel, new_accel,
 			new_orient, new_ang_vel, new_ang_accel, new_mass,
-			new_MoI, new_Rmin, new_Rmax);
+			new_MoI, new_Rmin, new_Rmax, new_spherical_harmonics);
 
 		bodies.push_back(new_body);
 	}
@@ -262,6 +265,23 @@ int main(int argc, char **argv)
 		sph_rad_presses.push_back(new_sph_rad_press);
 	}
 
+	// import spherical harmonics gravitational fields
+	std::cout << "Importing spherical harmonics gravitational field models...\n";
+	for (auto shg: mission_json["shgravs"])
+	{
+		int new_id = shg["id"];
+		int new_frame_id = shg["frame_id"];
+		std::string new_model_filename = shg["model_filename"];
+		int new_n = shg["max_degree"];
+		int new_m = shg["max_order"];
+		const char* new_model_filename_char = new_model_filename.c_str();
+
+		Body* new_frame_ptr = findBodyViaID(new_frame_id, &bodies);
+		SHGravity new_shgrav = SHGravity(new_id, new_frame_ptr, new_model_filename_char, new_n, new_m);
+
+		shgravities.push_back(new_shgrav);
+	}
+
 	// import simulation parameters
 	std::cout << "Importing simulation parameters...\n";
 	double time = mission_json["start_time"];
@@ -277,8 +297,9 @@ int main(int argc, char **argv)
 	std::vector<PolyAtmo>* poly_atmos_ptr = &poly_atmos;
 	std::vector<ExpoAtmo>* expo_atmos_ptr = &expo_atmos;
 	std::vector<SphericalRadPress>* sph_rad_presses_ptr = &sph_rad_presses;
+	std::vector<SHGravity>* shgravities_ptr = &shgravities;
 	Yoshida8 Y8 = Yoshida8(bodies_ptr, vessels_ptr, impulsive_maneuvers_ptr, const_accel_maneuvers_ptr,
-		poly_atmos_ptr, expo_atmos_ptr, sph_rad_presses_ptr);
+		poly_atmos_ptr, expo_atmos_ptr, sph_rad_presses_ptr, shgravities_ptr);
 
 	Yoshida8* Y8ptr = &Y8;
 

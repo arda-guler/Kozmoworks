@@ -17,4 +17,5 @@ add_executable(Kozmoworks
 	src/Output.cpp
 	src/Atmosphere.cpp
 	src/RadiationPressure.cpp
+	src/SphericalHarmonics.cpp
 )

@@ -7,6 +7,7 @@ class Body : public RigidBody
 public:
 	double Rmin, Rmax;
 	double mu;
+	bool spherical_harmonics;
 	
 	// this invokes the constructor of the RigidBody class too
 	Body()
@@ -31,12 +32,14 @@ public:
 		// calculate this here once so you don't have to make an unnecessary 
 		// multiplication every time getGravity() is called
 		mu = mass * Constants::G; 
+
+		spherical_harmonics = false;
 	}
 
 	Body(int pid, Vec3 ppos, Vec3 pvel, Vec3 paccel,
 		Mtx3x3 porient, Vec3 pang_vel, Vec3 pang_accel,
 		double pmass, Mtx3x3 pmoment_of_inertia,
-		double pRmin, double pRmax)
+		double pRmin, double pRmax, int pspherical_harmonics)
 	{
 		id = pid;
 
@@ -57,8 +60,19 @@ public:
 		// calculate this here once so you don't have to make an unnecessary 
 		// multiplication every time getGravity() is called
 		mu = mass * Constants::G;
+
+		if (pspherical_harmonics > 0)
+		{
+			spherical_harmonics = true;
+		}
+		else
+		{
+			spherical_harmonics = false;
+		}
+		
 	}
 
 	Vec3 getGravity(Vec3 tpos, bool harmonics);
 	Vec3 getTangentialVel(Vec3 tpos);
+	Vec3 getBodyCenteredCoords(Vec3 abspos);
 };

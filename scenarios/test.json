@@ -1,7 +1,7 @@
 {
   "start_time": 0,
-  "dt": 16,
-  "end_time": 40000,
+  "dt": 1,
+  "end_time": 6000,
 
   "bodies": {
 
@@ -23,7 +23,9 @@
         [ 0, 0, 9.736e37 ]
       ],
       "Rmin": 6356752.3,
-      "Rmax": 6378137.0
+      "Rmax": 6378137.0,
+
+      "spherical_harmonics": 0
     },
 
     "Luna": {
@@ -44,7 +46,9 @@
         [ 0, 0, 1e36 ]
       ],
       "Rmin": 1738100,
-      "Rmax": 1736000
+      "Rmax": 1736000,
+
+      "spherical_harmonics": 0
     }
 
   },

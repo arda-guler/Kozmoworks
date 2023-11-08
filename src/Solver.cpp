@@ -77,7 +77,12 @@ void Yoshida8::step(double dt, double time)
 			Vec3 grav_accel = Vec3();
 			for (auto& b : *this->bodies)
 			{
-				grav_accel = grav_accel + b.getGravity(v.pos, false);
+				grav_accel = grav_accel + b.getGravity(v.pos, b.spherical_harmonics);
+			}
+
+			for (auto& shg : *this->shgravities)
+			{
+				grav_accel = grav_accel + shg.computeAccel(v.pos, shg.max_n, shg.max_m);
 			}
 			v.applyAccel(grav_accel);
 		}
