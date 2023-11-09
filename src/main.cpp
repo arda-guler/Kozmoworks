@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "Vector3.h"
 #include "Matrix3x3.h"
@@ -353,8 +354,10 @@ int main(int argc, char **argv)
 
 	// do physics
 	int cycles = 0;
+	int max_cycles = (end_time - time) / dt;
 	bool simulation_running = true;
 	std::cout << "\n= = = SIMULATION STARTED = = =\n";
+	auto t1 = std::chrono::high_resolution_clock::now(); // time measuring
 	while (time <= end_time && simulation_running)
 	{	
 		// update plots
@@ -386,8 +389,18 @@ int main(int argc, char **argv)
 				}
 			}
 		}
+
+		// printout progress
+		if (cycles % 1000 == 0)
+		{
+			double complete_percent = (double)cycles / (double)max_cycles * 100;
+			std::cout << "Simulation is " << complete_percent << "% complete.\n";
+		}
 	}
+	auto t2 = std::chrono::high_resolution_clock::now(); // time measuring
+	std::chrono::duration<double> exec_time = t2 - t1;
 	std::cout << "= = =  SIMULATION ENDED  = = =\n\n";
+	std::cout << "Execution time: " << exec_time.count() << " seconds.\n\n";
 
 	// output recorded data to files
 	std::cout << "Writing results...\n";

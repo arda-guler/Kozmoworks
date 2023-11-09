@@ -4,23 +4,84 @@
 
 void SymplecticEuler::step(double dt, double time)
 {
+	// update vessel accels
 	for (auto& v : *this->vessels)
 	{
 		// sum all gravitational acceleration due to bodies
 		Vec3 grav_vector = Vec3();
 		for (auto b : *this->bodies)
 		{
-			grav_vector = grav_vector + b.getGravity(v.pos, false);
+			grav_vector = grav_vector + b.getGravity(v.pos, b.spherical_harmonics);
+		}
+
+		for (auto shg : *this->shgravities)
+		{
+			grav_vector = grav_vector + shg.computeAccel(v.pos, shg.max_n, shg.max_m);
 		}
 
 		v.applyAccel(grav_vector);
+
+		// perform finite burn maneuvers
+		for (auto& cam : *this->const_accel_maneuvers)
+		{
+			cam.perform(time);
+		}
+
+		// atmospheric drag accel
+		for (auto& pad : *this->poly_atmos)
+		{
+			pad.apply();
+		}
+
+		for (auto& ead : *this->expo_atmos)
+		{
+			ead.apply();
+		}
+
+		// radiation pressure accel
+		for (auto& srp : *this->sph_rad_presses)
+		{
+			srp.apply();
+		}
 	}
 
+	// update body accels
+	for (auto& b : *this->bodies)
+	{
+		// gravitational accel
+		Vec3 grav_accel = Vec3();
+		for (auto& b2 : *this->bodies)
+		{
+			if (b.pos.x != b2.pos.x &&
+				b.pos.y != b2.pos.y &&
+				b.pos.z != b2.pos.z) // make this b != b2, the current check is a workaround
+			{
+				grav_accel = grav_accel + b2.getGravity(b.pos, false);
+			}
+		}
+		b.applyAccel(grav_accel);
+	}
+
+	// update vessel vel and pos
 	for (auto& v : *this->vessels)
 	{
 		v.vel = v.vel + v.accel * dt;
 		v.pos = v.pos + v.vel * dt;
 		v.clearAccels();
+	}
+
+	// update body vel and pos
+	for (auto& b : *this->bodies)
+	{
+		b.vel = b.vel + b.accel * dt;
+		b.pos = b.pos + b.vel * dt;
+		b.clearAccels();
+	}
+
+	// impulsive maneuvers
+	for (auto& m : *this->impulsive_maneuvers)
+	{
+		m.perform(time);
 	}
 }
 
