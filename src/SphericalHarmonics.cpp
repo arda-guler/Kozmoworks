@@ -97,30 +97,12 @@ int SHGravity::loadModel()
 n_max: max. degree
 m_max: max. order
 
-The original MATLAB code (from NASA) can be found at:
 https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20160011252.pdf
-
-Thank you NASA, very cool.
-
-As is, this function does violent things of unspeakable nature to performance.
-I am probably overlooking something obvious and fundamental here. Any improvements would be nice.
-
-For starters, I think the normalization part can be done just once instead of once every cycle.
 */
-Vec3 SHGravity::computeAccel(Vec3 tpos, int n_max, int m_max)
+void SHGravity::computeNormalization(int n_max)
 {
-	// calculate normalization parameters
 	int m_max_temp = n_max;
 	n_max += 1;
-
-	std::vector<double> norm1(1500, 0);
-	std::vector<double> norm2(1500, 0);
-	std::vector<double> norm11(1500, 0);
-	std::vector<double> normn10(1500, 0);
-
-	std::vector<std::vector<double>> norm1m(1500, std::vector<double>(1500, 0));
-	std::vector<std::vector<double>> norm2m(1500, std::vector<double>(1500, 0));
-	std::vector<std::vector<double>> normn1(1500, std::vector<double>(1500, 0));
 
 	for (int n = 2; n < n_max; n++)
 	{
@@ -133,12 +115,26 @@ Vec3 SHGravity::computeAccel(Vec3 tpos, int n_max, int m_max)
 		{
 			norm1m[n][m] = sqrt((n - m) * (2 * n + 1) / ((n + m) * (2 * n - 1)));
 			norm2m[n][m] = sqrt((n - m) * (n - m - 1) * (2 * n + 1) / ((n + m) * (n + m - 1) * (2 * n - 3)));
-			normn1[n][m] = sqrt((n + m + 1) * (n - m));	
+			normn1[n][m] = sqrt((n + m + 1) * (n - m));
 		}
 	}
+}
 
-	n_max -= 1;
+/*
+n_max: max. degree
+m_max: max. order
 
+The original MATLAB code (from NASA) can be found at:
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20160011252.pdf
+
+Thank you NASA, very cool.
+
+As is, this function does violent things of unspeakable nature to performance.
+I am probably overlooking something obvious and fundamental here. Any improvements would be nice.
+*/
+
+Vec3 SHGravity::computeAccel(Vec3 tpos, int n_max, int m_max)
+{
 	// normalization factors computed
 	Vec3 x = parent->getBodyCenteredCoords(tpos);
 	double r = x.mag();
